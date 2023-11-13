@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Weather Forecast</title>
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/stylesheet.css">
 </head>
@@ -15,11 +15,30 @@
         <span>Weather Forecast</span>
     </header>
     <main class="main-container">
-        <aside class="aside-container"></aside>
+        <aside class="aside-container">
+            <form class="search-bar-container">
+                <label for="search-bar">Search for Country or City Name:</label><br>
+                <input type="text" name="search-bar" class="search-bar-input" id="search-bar-input" autocomplete="off" placeholder="Please enter a country name or a city name"><br>
+                <input type="submit" class="search-button" id="search-button-id">
+            </form>
+            <hr>
+            <div class="search-history-container">
+                <span class="search-history-text">Search Histories</span>
+                <ul class="search-history-list"></ul>
+            </div>
+        </aside>
         <section class="api-container">
-            <div></div>
-            <div></div>
-            <div></div>
+            <div class="todays-weather-container">
+                <span class="todays-date" id="todays-date">Today's date</span>
+                <div class="todays-weather-content">
+                    <span>Today's weather</span>
+                </div>
+            </div>
+            <hr>
+            <div class="five-day-forecast-container">
+                <span class="five-day-forecast-title">Five Day Forecast</span>
+                <div class="five-day-forecast-content"></div>
+            </div>
         </section>
     </main>
 
