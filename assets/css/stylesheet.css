@@ -1,0 +1,40 @@
+.header-element {
+    height:10vh;
+    width:100%;
+    border-style: solid;
+    border-color: rgb(222, 87, 153);
+    border-radius: 1%;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 200%;
+    font-weight: bold;
+    border-width: 5px;
+}
+
+.main-container {
+    border-style: solid;
+    border-color:blueviolet;
+    height:90vh;
+    width:100%;
+    border-width: 5px 3px 5px 3px;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.aside-container {
+    width: 25%;
+    border-style: solid;
+    border-color: rgb(171, 195, 18);
+    border-width:3px;
+}
+
+.api-container {
+    width: 75%;
+    border-style: solid;
+    border-color: rgb(139, 13, 32);
+    border-width:3px;
+}
