@@ -32,10 +32,6 @@ var RequestWeatherForecastByCityName = function (weatherForecastURL) {
         });
 }
 
-
-
-
-
 getSearchButton.addEventListener("click", function (event) {
     event.preventDefault();
     if (getsearchBarInput !== null) {
@@ -52,7 +48,8 @@ var assembleApiRequsetURL = function (cityName) {
    var assembledURLforTodaysWeather = "https://api.openweathermap.org/data/2.5/weather?q="+ cityName  + "&appid=" + APIkey
    var assembledURLforFiveDayForecast = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName +"&appid=" + APIkey
    RequestCityNameThruGeocode(assembledURLforFiveDayForecast);
-
+console.log("assembled URL for five day weather" + assembledURLforFiveDayForecast);
+console.log("assembled URL for todays weather" + assembledURLforTodaysWeather)
 }
 
 var RequestCityNameThruGeocode = function (GeoCodeData) {
@@ -75,5 +72,5 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
         });
 }
 
-var location = LosAngeles
-assembleApiRequsetURL(location);
+var testlocation = "LosAngeles";
+assembleApiRequsetURL(testlocation);
