@@ -99,8 +99,26 @@ initialRenderSearchHisotory();
 
 // declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
 var SearchHistoryUL = document.getElementsByClassName("search-history-list")  //this is the ul element
-console.log(SearchHistoryUL)
-console.log(SearchHistoryUL.children)
+console.log(SearchHistoryUL);
+console.log(SearchHistoryUL.children);
+
+// add function to li elements, when clicked, get the text content of the li element and call the function to assmble URL for api call
+SearchHistoryUL.children.forEach((item) => {
+    item.addEventListener("click", function (event) {
+        event.preventDefault();
+        var liElement = event.target
+        var CityNamefromSearchHistory = liElement.textContent
+        assembleApiRequsetURL(CityNamefromSearchHistory);
+        getTodaysWeatherUlelement.innerHTML = "";
+        getFiveDayforecastContentulElement.innerHTML = "";
+        if ((getTodaysWeatherContainer.children[2] === undefined) === false) { 
+            getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])
+        }    
+    })
+    
+})
+
+
 
 // var SearchHistoryElementEventhandlerFunction = funtion(){}
 
