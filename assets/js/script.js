@@ -6,15 +6,19 @@ var getFiveDayforecastContentContainer = document.getElementById("five-day-forec
 var getFiveDayforecastContentulElement = document.getElementById("five-day-forecast-ul-element");
 var getTodaysDateEl = document.getElementById("todays-date");
 var getTodaysWeatherUlelement = document.getElementById("todays-weather-ul-element-id");
-var getTodaysWeatherContainer =document.getElementById("todays-weather-content-container");
-var getTodaysWeatherIcon = document.getElementById("todays-weather-icon-id")
+var getTodaysWeatherContainer = document.getElementById("todays-weather-content-container");
+var getTodaysWeatherIcon = document.getElementById("todays-weather-icon-id");
+var searchHistoryArray = [];
+var getSearchHistoryUlelement = document.getElementById("search-history-ul-element");
+var getCityNameFromInput = getsearchBarInput.value.trim();
+
 // sample url = https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
 // https://api.openweathermap.org/data/2.5/weather?q={city name},{country code}&appid={API key}
 // https://api.openweathermap.org/data/2.5/weather?q={city name},{state code},{country code}&appid={API key}
 // https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
 
 //geocode convert api : http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-var LosAngeles = "https://api.openweathermap.org/data/2.5/weather?q=los angeles&appid=" + APIkey;
+//var LosAngeles = "https://api.openweathermap.org/data/2.5/weather?q=los angeles&appid=" + APIkey;
 
 var RequestWeatherForecastByCityName = function (weatherForecastURL) {
     fetch(weatherForecastURL)
@@ -23,35 +27,81 @@ var RequestWeatherForecastByCityName = function (weatherForecastURL) {
                 console.log(response);
                 return response.json()
             } else {
-                alert("Error:" + response.statusText);
+                alert("Error:" + response.statusText + "\nPlease check if you entered a correct City Name!");
             }
         })
         .then(function (data) {
             console.log(data);
             DisplayTodaysWeather(data);
-            //  console.log(data.coord);
+            console.log("the city name in data is: " + data.name)
+            // call a function to push the city name to the local storage here to ensure that when the server responses and  a correct name of the city will be set to be local storage
+            SaveObjectToArrayAndLS(data.name);
+            // console.log(data.coord);
         }
         )
         .catch(function (error) {
-            alert("error message:" + error);
+         //  alert("error message:" + error);
             console.log("error message: " + error);
         });
 }
 
 getSearchButton.addEventListener("click", function (event) {
     event.preventDefault();
-    if (getsearchBarInput === null) { return alert("please enter a city name!");
-    } else  {
-        var getCityNameFromInput = getsearchBarInput.value;
-        getsearchBarInput.textContent = "";
-        getTodaysWeatherUlelement.innerHTML ="";
-        getFiveDayforecastContentulElement.innerHTML="";
-        if (getTodaysWeatherContainer.children[2] !== null) {getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])} else {return;}
-
-        assembleApiRequsetURL(getCityNameFromInput);
+    if (getsearchBarInput.value === "") {
+        return alert("please enter a city name!");
+    } else {
+        getCityNameFromInput = getsearchBarInput.value.trim();
+    //    console.log(getsearchBarInput);    //logs one html element as an object
+    //    console.log("getsearchbarinput.value: " +getsearchBarInput.value);   //logs the value of the input
+    //    console.log("getCityNameFromInput: " +getCityNameFromInput);   // must declare this variable inside event handler to get the value of the input;  or declare the var in global scope and change the value of the var inside the function. 
+        // remove the content in the container before rendering new content to the container; preventing render reptitive content in the container
+        getTodaysWeatherUlelement.innerHTML = "";
+        getFiveDayforecastContentulElement.innerHTML = "";
+        if ((getTodaysWeatherContainer.children[2] === undefined) === false) { 
+            getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])
+        }
+        assembleApiRequsetURL(getCityNameFromInput);  // call a function and pass the value of input to that function
+        getsearchBarInput.value = ""   //put this in the bottom preventing clear the value before other functions get the value
     }
 }
 )
+
+//currentCityName is from data.main.name   from RequestWeatherForecastByCityName() fetch call;
+var SaveObjectToArrayAndLS =function(currectCityName){
+    var objectofinputCityName = {
+        CityNameinObject:currectCityName
+    };
+    searchHistoryArray.push(objectofinputCityName);
+    console.log(searchHistoryArray);
+    localStorage.setItem("ArrayofObjectofSearchHistoryinLS", JSON.stringify(searchHistoryArray));
+    AppendOneListToSearchHistory(currectCityName)
+
+}
+
+var AppendOneListToSearchHistory = function (CityName) {
+    var createliElforSearchHistory = document.createElement("li");
+    createliElforSearchHistory.setAttribute("class", "search-history-list-class")
+    createliElforSearchHistory.setAttribute("id", "search-history-list-id")
+    createliElforSearchHistory.textContent = CityName;
+    getSearchHistoryUlelement.append(createliElforSearchHistory);
+}
+
+// initial rendering function
+var initialRenderSearchHisotory = function () {
+    var getArrayfromLS = JSON.parse(localStorage.getItem("ArrayofObjectofSearchHistoryinLS"));
+    if (getArrayfromLS !== null) { searchHistoryArray = getArrayfromLS };
+    for (i = 0; i < searchHistoryArray.length; i++) {
+        AppendOneListToSearchHistory(searchHistoryArray[i].CityNameinObject);
+    }
+}
+// call this function when the page initials or refreshes
+initialRenderSearchHisotory();
+
+// declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
+var SearchHistoryUL = document.getElementsByClassName("search-history-list")  //this is the ul element
+console.log(getSearchHistoryUlelement)
+
+// var SearchHistoryElementEventhandlerFunction = funtion(){}
 
 var assembleApiRequsetURL = function (cityName) {
     var assembledURLforTodaysWeather = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIkey
@@ -63,7 +113,6 @@ var assembleApiRequsetURL = function (cityName) {
 }
 
 var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityName) {
-    
     var list1 = document.createElement("li");
     var list2 = document.createElement("li");
     var list3 = document.createElement("li");
@@ -77,8 +126,8 @@ var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityN
     list3.textContent = "Wind Speed: " + ObjectDataFromRequestWeatherForecastByCityName.wind.speed + " MPH";
     list4.textContent = "Humidity: " + ObjectDataFromRequestWeatherForecastByCityName.main.humidity + "%"
     weatherIcon.setAttribute("src", IconURL1);
-    weatherIcon.setAttribute("id","todays-weather-icon-id")
-   
+    weatherIcon.setAttribute("id", "todays-weather-icon-id")
+
     getTodaysWeatherUlelement.append(list1);
     getTodaysWeatherUlelement.append(list2);
     getTodaysWeatherUlelement.append(list3);
@@ -95,7 +144,7 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
                 // console.log(response);
                 return response.json();
             } else {
-                alert("Error:" + response.statusText);
+                //  alert("Error:" + response.statusText);
             }
         })
         .then(function (data) {
@@ -108,8 +157,8 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
         }
         )
         .catch(function (error) {
-            alert("error message:" + error);
-            console.log("error message: " + error);
+            // alert("error message:" + error);
+            // console.log("error message: " + error);
         });
 }
 
@@ -126,7 +175,7 @@ var getFiveDayforecastData = function (Latitude, longitude) {
             }
         })
         .then(function (data) {
-             console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
+            console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
             DisplayFiveDayForecast(data);
         }
         )
@@ -148,7 +197,7 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         var USstandardDate = new Intl.DateTimeFormat('en-US').format(formattedDate);
         //  console.log(USstandardDate);  //logs us standard date
         var maxFahrenheit = ((+ArrayofForecast[i].main.temp_max - 273.15) * 1.8 + 32).toFixed(2);
-    //    var minFahrenheit = ((+ArrayofForecast[i].main.temp_min - 273.15) * 1.8 + 32).toFixed(2);
+        //    var minFahrenheit = ((+ArrayofForecast[i].main.temp_min - 273.15) * 1.8 + 32).toFixed(2);
         // console.log("maxFahrenheit: " + maxFahrenheit);  //logs max temperturn in F degree with two decimal figures
         // console.log("minFahrenheit: " + minFahrenheit);  //logs max temperturn in F degree with two decimal figures
         // below for reference:   
@@ -169,8 +218,8 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         fiveDayForecastListEl.classList.add("five-day-forecast-listcontainer")
         // set attribute to the span
         fiveDayForecastspanEl.textContent = "Date: " + USstandardDate
-            +  "\nMax temperture: " + maxFahrenheit + " F "
-            +  "\nWind speed: " + windSpeed;
+            + "\nMax temperture: " + maxFahrenheit + " F "
+            + "\nWind speed: " + windSpeed;
         fiveDayForecastspanEl.classList.add("five-day-forecast-span");
         // set attribute to the icon
         fiveDayForecastIconEl.classList.add("five-day-forecast-icon");
