@@ -99,7 +99,8 @@ initialRenderSearchHisotory();
 
 // declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
 var SearchHistoryUL = document.getElementsByClassName("search-history-list")  //this is the ul element
-console.log(getSearchHistoryUlelement)
+console.log(SearchHistoryUL)
+console.log(SearchHistoryUL.children)
 
 // var SearchHistoryElementEventhandlerFunction = funtion(){}
 
