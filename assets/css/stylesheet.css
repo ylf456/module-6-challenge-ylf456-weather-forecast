@@ -104,7 +104,6 @@
     display: flex;
     flex-direction: column;
     height: 25vh;
-
     flex-wrap: wrap;
 }
 
@@ -124,22 +123,21 @@
     font-size: 110%;
     display: flex;
     flex-direction: row;
-
 }
 
 .todays-weather-content ul {
-    max-width:50%}
+    max-width: 50%
+}
 
 .todays-weather-content li {
     line-height: 1.5;
     margin-left: 2%;
     font-size: 80%;
-    
 }
 
 .todays-weather-content img {
     float: right;
-    
+
     width: fit-content;
     height: fit-content;
 }
