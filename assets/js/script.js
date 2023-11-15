@@ -160,11 +160,11 @@ var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityN
     var IconCode1 = ObjectDataFromRequestWeatherForecastByCityName.weather[0].icon;
     var IconURL1 = "https://openweathermap.org/img/wn/" + IconCode1 + "@2x.png"
 
-    list1.textContent = "Max temperature: " + ((+ObjectDataFromRequestWeatherForecastByCityName.main.temp_max - 273.15) * 1.8 + 32).toFixed(2) + " F";
-    list2.textContent = "Min temperature: " + ((+ObjectDataFromRequestWeatherForecastByCityName.main.temp_min - 273.15) * 1.8 + 32).toFixed(2) + " F";
+    list1.textContent = "Max temperature: " + ((+ObjectDataFromRequestWeatherForecastByCityName.main.temp_max - 273.15) * 1.8 + 32).toFixed(2) + " °F";
+    list2.textContent = "Min temperature: " + ((+ObjectDataFromRequestWeatherForecastByCityName.main.temp_min - 273.15) * 1.8 + 32).toFixed(2) + " °F";
     list3.textContent = "Wind Speed: " + ObjectDataFromRequestWeatherForecastByCityName.wind.speed + " MPH";
     list4.textContent = "Humidity: " + ObjectDataFromRequestWeatherForecastByCityName.main.humidity + "%"
-    list5.textContent = "City Name: " +ObjectDataFromRequestWeatherForecastByCityName.name;
+    list5.textContent = "Location: " +ObjectDataFromRequestWeatherForecastByCityName.name;
     weatherIcon.setAttribute("src", IconURL1);
     weatherIcon.setAttribute("id", "todays-weather-icon-id")
 
@@ -259,7 +259,7 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         fiveDayForecastListEl.classList.add("five-day-forecast-listcontainer")
         // set attribute to the span
         fiveDayForecastspanEl.textContent = "Date: " + USstandardDate
-            + "\nMax temperture: " + maxFahrenheit + " F "
+            + "\nMax temperture: " + maxFahrenheit + " °F "
             + "\nWind speed: " + windSpeed;
         fiveDayForecastspanEl.classList.add("five-day-forecast-span");
         // set attribute to the icon
