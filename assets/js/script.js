@@ -84,8 +84,22 @@ var SaveObjectToArrayAndLS = function (currectCityName) {
 var AppendOneListToSearchHistory = function (CityName) {
     var createliElforSearchHistory = document.createElement("li");
     createliElforSearchHistory.setAttribute("class", "search-history-list-class")
-    createliElforSearchHistory.setAttribute("id", "search-history-list-id")
+    //createliElforSearchHistory.setAttribute("id", "search-history-list-id")
     createliElforSearchHistory.textContent = CityName;
+    createliElforSearchHistory.addEventListener("click", function(event) {
+        event.preventDefault();
+        var liEventTarget = event.target;
+        var CityNameforURLassemble = liEventTarget.textContent;
+        assembleApiRequsetURL(CityNameforURLassemble)
+        getTodaysWeatherUlelement.innerHTML = "";
+        getFiveDayforecastContentulElement.innerHTML = "";
+        if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
+            getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2]);
+            
+            
+        }
+    }
+    )
     getSearchHistoryUlelement.append(createliElforSearchHistory);
    // addEventListenertothelistEl();
 }
@@ -102,6 +116,7 @@ var initialRenderSearchHisotory = function () {
 initialRenderSearchHisotory();
 
 
+/* for reference
  //var addEventListenertothelistEl = function(){}
 // declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
 var SearchHistoryUL = document.getElementsByClassName("search-history-list-class")  //this is the ul element
@@ -112,8 +127,7 @@ Array.from(SearchHistoryUL).forEach((item) => {
     item.addEventListener("click", function (event) {
         event.preventDefault();
         var liElement = event.target
-        var CityNamefromSearchHistory = liElement.textContent
-
+        var CityNamefromSearchHistory = liElement.textContent;
         getTodaysWeatherUlelement.innerHTML = "";
         getFiveDayforecastContentulElement.innerHTML = "";
         if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
@@ -123,9 +137,7 @@ Array.from(SearchHistoryUL).forEach((item) => {
     })
 })
 
-
-
-
+*/
 
 // var SearchHistoryElementEventhandlerFunction = funtion(){}
 
@@ -193,7 +205,7 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
 
 var getFiveDayforecastData = function (Latitude, longitude) {
     var assembleUrlwithGeocode = "https://api.openweathermap.org/data/2.5/forecast?lat=" + Latitude + "&lon=" + longitude + "&appid=" + APIkey
-
+    
     fetch(assembleUrlwithGeocode)
         .then(function (response) {
             if (response.ok === true) {
@@ -273,8 +285,6 @@ setInterval(DisplayCurrentDate, 60000)
 
 
 // add conditions if data return an array === null, alert("please enter a correct City name!")
-
-
 
 //test calls for geo code
 //var testlocation = "Los Angeles";
