@@ -76,7 +76,23 @@
     font-size: 120%;
 }
 
-.search-history-container li {}
+.search-history-list-class {
+    margin-top: 5%;
+    border-style: solid;
+    border-color: black;
+    border-width: 3px;
+    text-align: center;
+    background-color: rgb(169, 208, 234);
+    padding: 2%;
+}
+
+.search-history-list-class:hover {
+    border-color: rgb(226, 36, 36);
+}
+
+.search-history-list-class::selection {
+    border-color: rgb(226, 36, 36);
+}
 
 .todays-date {
     line-height: 2;
