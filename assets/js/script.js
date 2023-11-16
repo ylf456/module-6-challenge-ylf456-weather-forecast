@@ -185,7 +185,7 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
             }
         })
         .then(function (data) {
-            // console.log(data);
+             console.log(data);
             // console.log("latitude of this city: " + data[0].lat)
             // console.log("longitude of this city: " + data[0].lon)
             var CityLatitude = data[0].lat
@@ -212,7 +212,7 @@ var getFiveDayforecastData = function (Latitude, longitude) {
             }
         })
         .then(function (data) {
-            //  console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
+              console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
             DisplayFiveDayForecast(data);
         }
         )
@@ -240,12 +240,14 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         // below for reference:   
         // var dateData = ArrayofForecast[i].dt_txt.split(" ")[0]
         // var formattedDate = dateData.replace("2023-","") + "-2023"
-        var windSpeed = ArrayofForecast[i].wind.speed + " MPH";
+        var windSpeed = ArrayofForecast[i].wind.speed + " MPH.";
         //   console.log(windSpeed); //logs wind speed with MPH unit
         var iconcode = ArrayofForecast[i].weather[0].icon;
         // console.log(iconcode); //logs the icon code of the day
         // example: https://openweathermap.org/img/wn/10d@2x.png
         var iconurl = "https://openweathermap.org/img/wn/" + iconcode + "@2x.png"
+        var humiDity = ArrayofForecast[i].main.humidity;
+        console.log(humiDity);
         // console.log(iconurl);  //logs the picture respresents the iconcode
         // create element for appendding
         var fiveDayForecastListEl = document.createElement("li");
@@ -254,9 +256,10 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         // give attribute to container
         fiveDayForecastListEl.classList.add("five-day-forecast-listcontainer")
         // set attribute to the span
-        fiveDayForecastspanEl.textContent = "Date: " + USstandardDate
-            + "\nMax temperture: " + maxFahrenheit + " °F "
-            + "\nWind speed: " + windSpeed;
+        fiveDayForecastspanEl.textContent = "Date: " + USstandardDate +"."
+            + "\nMax temperture: " + maxFahrenheit + " °F. "
+            + "\nWind speed: " + windSpeed
+            + "\nHumidity: " + humiDity +".";
         fiveDayForecastspanEl.classList.add("five-day-forecast-span");
         // set attribute to the icon
         fiveDayForecastIconEl.classList.add("five-day-forecast-icon");
@@ -293,3 +296,6 @@ assembleApiRequsetURL(testlocation2)
 var testlocation3 = "dallas"
 assembleApiRequsetURL(testlocation3)
 */
+
+
+//Todo make every var to be <li> elements, so they start in a new line.
