@@ -24,18 +24,18 @@ var RequestWeatherForecastByCityName = function (weatherForecastURL) {
     fetch(weatherForecastURL)
         .then(function (response) {
             if (response.ok === true) {
-              //  console.log(response);
+                //  console.log(response);
                 return response.json()
             } else {
                 alert("Error:" + response.statusText + "\nPlease check if you entered a correct City Name!");
             }
         })
         .then(function (data) {
-          //  console.log(data);
+            //  console.log(data);
             DisplayTodaysWeather(data);
             console.log("the city name in data is: " + data.name)
             // call a function to push the city name to the local storage here to ensure that when the server responses and  a correct name of the city will be set to be local storage
-           // SaveObjectToArrayAndLS(data.name);
+            // SaveObjectToArrayAndLS(data.name);
             // console.log(data.coord);
         }
         )
@@ -51,7 +51,6 @@ getSearchButton.addEventListener("click", function (event) {
         return alert("please enter a city name!");
     } else {
         getCityNameFromInput = getsearchBarInput.value.trim();
-
         //    console.log(getsearchBarInput);    //logs one html element as an object
         //    console.log("getsearchbarinput.value: " +getsearchBarInput.value);   //logs the value of the input
         //    console.log("getCityNameFromInput: " +getCityNameFromInput);   // must declare this variable inside event handler to get the value of the input;  or declare the var in global scope and change the value of the var inside the function. 
@@ -64,7 +63,6 @@ getSearchButton.addEventListener("click", function (event) {
         SaveObjectToArrayAndLS(getCityNameFromInput);
         assembleApiRequsetURL(getCityNameFromInput);  // call a function and pass the value of input to that function
         getsearchBarInput.value = "";  //put this in the bottom preventing clear the value before other functions get the value
-        
     }
 }
 )
@@ -86,7 +84,7 @@ var AppendOneListToSearchHistory = function (CityName) {
     createliElforSearchHistory.setAttribute("class", "search-history-list-class")
     //createliElforSearchHistory.setAttribute("id", "search-history-list-id")
     createliElforSearchHistory.textContent = CityName;
-    createliElforSearchHistory.addEventListener("click", function(event) {
+    createliElforSearchHistory.addEventListener("click", function (event) {
         event.preventDefault();
         var liEventTarget = event.target;
         var CityNameforURLassemble = liEventTarget.textContent;
@@ -95,13 +93,11 @@ var AppendOneListToSearchHistory = function (CityName) {
         getFiveDayforecastContentulElement.innerHTML = "";
         if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
             getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2]);
-            
-            
         }
     }
     )
     getSearchHistoryUlelement.append(createliElforSearchHistory);
-   // addEventListenertothelistEl();
+    // addEventListenertothelistEl();
 }
 
 // initial rendering function
@@ -143,7 +139,7 @@ Array.from(SearchHistoryUL).forEach((item) => {
 
 var assembleApiRequsetURL = function (cityName) {
     var assembledURLforTodaysWeather = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIkey
-    var assembledURLforFiveDayForecastGeocode = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + APIkey
+    var assembledURLforFiveDayForecastGeocode = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + APIkey
     RequestWeatherForecastByCityName(assembledURLforTodaysWeather);
     RequestCityNameThruGeocode(assembledURLforFiveDayForecastGeocode);
     console.log("assembled URL to request for geo code of the input city name: " + assembledURLforFiveDayForecastGeocode);
@@ -155,7 +151,7 @@ var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityN
     var list2 = document.createElement("li");
     var list3 = document.createElement("li");
     var list4 = document.createElement("li");
-    var list5 =document.createElement("li")
+    var list5 = document.createElement("li")
     var weatherIcon = document.createElement("img")
     var IconCode1 = ObjectDataFromRequestWeatherForecastByCityName.weather[0].icon;
     var IconURL1 = "https://openweathermap.org/img/wn/" + IconCode1 + "@2x.png"
@@ -164,7 +160,7 @@ var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityN
     list2.textContent = "Min temperature: " + ((+ObjectDataFromRequestWeatherForecastByCityName.main.temp_min - 273.15) * 1.8 + 32).toFixed(2) + " °F";
     list3.textContent = "Wind Speed: " + ObjectDataFromRequestWeatherForecastByCityName.wind.speed + " MPH";
     list4.textContent = "Humidity: " + ObjectDataFromRequestWeatherForecastByCityName.main.humidity + "%"
-    list5.textContent = "Location: " +ObjectDataFromRequestWeatherForecastByCityName.name;
+    list5.textContent = "Location: " + ObjectDataFromRequestWeatherForecastByCityName.name;
     weatherIcon.setAttribute("src", IconURL1);
     weatherIcon.setAttribute("id", "todays-weather-icon-id")
 
@@ -205,7 +201,7 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
 
 var getFiveDayforecastData = function (Latitude, longitude) {
     var assembleUrlwithGeocode = "https://api.openweathermap.org/data/2.5/forecast?lat=" + Latitude + "&lon=" + longitude + "&appid=" + APIkey
-    
+
     fetch(assembleUrlwithGeocode)
         .then(function (response) {
             if (response.ok === true) {
@@ -216,7 +212,7 @@ var getFiveDayforecastData = function (Latitude, longitude) {
             }
         })
         .then(function (data) {
-          //  console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
+            //  console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
             DisplayFiveDayForecast(data);
         }
         )
