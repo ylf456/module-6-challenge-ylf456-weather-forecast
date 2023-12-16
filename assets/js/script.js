@@ -8,32 +8,29 @@ var getTodaysDateEl = document.getElementById("todays-date");
 var getTodaysWeatherUlelement = document.getElementById("todays-weather-ul-element-id");
 var getTodaysWeatherContainer = document.getElementById("todays-weather-content-container");
 var getTodaysWeatherIcon = document.getElementById("todays-weather-icon-id");
-var searchHistoryArray = [];
+var searchHistoryArray = [];  //This virtual array is for LS and reder use
 var getSearchHistoryUlelement = document.getElementById("search-history-ul-element");
 var getCityNameFromInput = getsearchBarInput.value.trim();
-
-// sample url = https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
-// https://api.openweathermap.org/data/2.5/weather?q={city name},{country code}&appid={API key}
-// https://api.openweathermap.org/data/2.5/weather?q={city name},{state code},{country code}&appid={API key}
-// https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
-
-//geocode convert api : http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-//var LosAngeles = "https://api.openweathermap.org/data/2.5/weather?q=los angeles&appid=" + APIkey;
 
 var RequestWeatherForecastByCityName = function (weatherForecastURL) {
     fetch(weatherForecastURL)
         .then(function (response) {
             if (response.ok === true) {
                 //  console.log(response);
-                return response.json()
+                return response.json();
             } else {
                 alert("Error:" + response.statusText + "\nPlease check if you entered a correct City Name!");
+                return;
             }
         })
         .then(function (data) {
-            //  console.log(data);
-            DisplayTodaysWeather(data);
-            console.log("the city name in data is: " + data.name)
+            //console.log(data);
+            //console.log(typeof (data.name));
+            let Name = data.name
+            if (data !== undefined) {
+                DisplayTodaysWeather(data);
+                SaveObjectToArrayAndLS(Name);
+            };
             // call a function to push the city name to the local storage here to ensure that when the server responses and  a correct name of the city will be set to be local storage
             // SaveObjectToArrayAndLS(data.name);
             // console.log(data.coord);
@@ -60,35 +57,44 @@ getSearchButton.addEventListener("click", function (event) {
         if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
             getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])
         }
-        SaveObjectToArrayAndLS(getCityNameFromInput);
+        // SaveObjectToArrayAndLS(getCityNameFromInput);
         assembleApiRequsetURL(getCityNameFromInput);  // call a function and pass the value of input to that function
         getsearchBarInput.value = "";  //put this in the bottom preventing clear the value before other functions get the value
     }
 }
-)
+);
+    //currentCityName is from data.main.name   from RequestWeatherForecastByCityName() fetch call;
 
-//currentCityName is from data.main.name   from RequestWeatherForecastByCityName() fetch call;
 var SaveObjectToArrayAndLS = function (currectCityName) {
-    var objectofinputCityName = {
+    let objectofinputCityName = {
         CityNameinObject: currectCityName
     };
-    searchHistoryArray.push(objectofinputCityName);
-    console.log(searchHistoryArray);
-    localStorage.setItem("ArrayofObjectofSearchHistoryinLS", JSON.stringify(searchHistoryArray));
-    AppendOneListToSearchHistory(currectCityName)
-
+    console.log("one object before being pushed to array: " + "\n---------------");
+    console.log(objectofinputCityName);
+    console.log("testing if searchHistoryArray.includes((currectCityName)" + "\n------------------------");
+    console.log(searchHistoryArray.find(item => item.CityNameinObject === currectCityName));
+    console.log(".find() method: " + "\n-----------------");
+    console.log(searchHistoryArray.includes(currectCityName))
+    if ((searchHistoryArray.find(item => item.CityNameinObject === currectCityName)) === undefined) {
+        searchHistoryArray.push(objectofinputCityName);
+        console.log("after pushed the object array: " + "\n---------------------")
+        console.log(searchHistoryArray);
+        localStorage.setItem("ArrayofObjectofSearchHistoryinLS", JSON.stringify(searchHistoryArray));
+        AppendOneListToSearchHistory(currectCityName);
+    } else if ((searchHistoryArray.find(item => item.CityNameinObject === currectCityName)) === objectofinputCityName) {
+        return;
+    };
 }
 
 var AppendOneListToSearchHistory = function (CityName) {
     var createliElforSearchHistory = document.createElement("li");
     createliElforSearchHistory.setAttribute("class", "search-history-list-class")
-    //createliElforSearchHistory.setAttribute("id", "search-history-list-id")
     createliElforSearchHistory.textContent = CityName;
     createliElforSearchHistory.addEventListener("click", function (event) {
         event.preventDefault();
         var liEventTarget = event.target;
         var CityNameforURLassemble = liEventTarget.textContent;
-        assembleApiRequsetURL(CityNameforURLassemble)
+        assembleApiRequsetURL(CityNameforURLassemble);
         getTodaysWeatherUlelement.innerHTML = "";
         getFiveDayforecastContentulElement.innerHTML = "";
         if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
@@ -99,7 +105,6 @@ var AppendOneListToSearchHistory = function (CityName) {
     getSearchHistoryUlelement.append(createliElforSearchHistory);
     // addEventListenertothelistEl();
 }
-
 // initial rendering function
 var initialRenderSearchHisotory = function () {
     var getArrayfromLS = JSON.parse(localStorage.getItem("ArrayofObjectofSearchHistoryinLS"));
@@ -108,42 +113,18 @@ var initialRenderSearchHisotory = function () {
         AppendOneListToSearchHistory(searchHistoryArray[i].CityNameinObject);
     }
 }
+
 // call this function when the page initials or refreshes
 initialRenderSearchHisotory();
 
-
-/* for reference
- //var addEventListenertothelistEl = function(){}
-// declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
-var SearchHistoryUL = document.getElementsByClassName("search-history-list-class")  //this is the ul element
-//console.log(SearchHistoryUL);
-//console.log(SearchHistoryUL[0]);
-// add function to li elements, when clicked, get the text content of the li element and call the function to assmble URL for api call
-Array.from(SearchHistoryUL).forEach((item) => {
-    item.addEventListener("click", function (event) {
-        event.preventDefault();
-        var liElement = event.target
-        var CityNamefromSearchHistory = liElement.textContent;
-        getTodaysWeatherUlelement.innerHTML = "";
-        getFiveDayforecastContentulElement.innerHTML = "";
-        if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
-            getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])
-        }
-        assembleApiRequsetURL(CityNamefromSearchHistory);
-    })
-})
-
-*/
-
 // var SearchHistoryElementEventhandlerFunction = funtion(){}
-
 var assembleApiRequsetURL = function (cityName) {
     var assembledURLforTodaysWeather = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIkey
     var assembledURLforFiveDayForecastGeocode = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + APIkey
     RequestWeatherForecastByCityName(assembledURLforTodaysWeather);
     RequestCityNameThruGeocode(assembledURLforFiveDayForecastGeocode);
     console.log("assembled URL to request for geo code of the input city name: " + assembledURLforFiveDayForecastGeocode);
-    console.log("assembled URL for todays weather: " + assembledURLforTodaysWeather)
+    console.log("assembled URL for todays weather: " + assembledURLforTodaysWeather);
 }
 
 var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityName) {
@@ -164,11 +145,7 @@ var DisplayTodaysWeather = function (ObjectDataFromRequestWeatherForecastByCityN
     weatherIcon.setAttribute("src", IconURL1);
     weatherIcon.setAttribute("id", "todays-weather-icon-id")
 
-    getTodaysWeatherUlelement.append(list1);
-    getTodaysWeatherUlelement.append(list2);
-    getTodaysWeatherUlelement.append(list3);
-    getTodaysWeatherUlelement.append(list4);
-    getTodaysWeatherUlelement.append(list5);
+    getTodaysWeatherUlelement.append(list1, list2, list3, list4, list5);
     getTodaysWeatherContainer.append(weatherIcon);
     //  console.log(list3);
     //  console.log(ObjectDataFromRequestWeatherForecastByCityName.wind.speed);
@@ -185,7 +162,7 @@ var RequestCityNameThruGeocode = function (GeoCodeData) {
             }
         })
         .then(function (data) {
-             console.log(data);
+            console.log(data);
             // console.log("latitude of this city: " + data[0].lat)
             // console.log("longitude of this city: " + data[0].lon)
             var CityLatitude = data[0].lat
@@ -212,7 +189,7 @@ var getFiveDayforecastData = function (Latitude, longitude) {
             }
         })
         .then(function (data) {
-              console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
+            console.log(data);  //this data logs an object, the name:list in the object contain an array of 40 items  (each item increment hour by 3)
             DisplayFiveDayForecast(data);
         }
         )
@@ -240,33 +217,39 @@ var DisplayFiveDayForecast = function (objectofFiveDayForecastData) {
         // below for reference:   
         // var dateData = ArrayofForecast[i].dt_txt.split(" ")[0]
         // var formattedDate = dateData.replace("2023-","") + "-2023"
-        var windSpeed = ArrayofForecast[i].wind.speed + " MPH.";
+        var windSpeed = ArrayofForecast[i].wind.speed;
         //   console.log(windSpeed); //logs wind speed with MPH unit
         var iconcode = ArrayofForecast[i].weather[0].icon;
         // console.log(iconcode); //logs the icon code of the day
         // example: https://openweathermap.org/img/wn/10d@2x.png
         var iconurl = "https://openweathermap.org/img/wn/" + iconcode + "@2x.png"
         var humiDity = ArrayofForecast[i].main.humidity;
-        console.log(humiDity);
+        //console.log(humiDity);
         // console.log(iconurl);  //logs the picture respresents the iconcode
         // create element for appendding
-        var fiveDayForecastListEl = document.createElement("li");
-        var fiveDayForecastspanEl = document.createElement("span");
-        var fiveDayForecastIconEl = document.createElement("img");
+        let fiveDayForecastListEl = document.createElement("li");
+        let fiveDayForecastspanEl1 = document.createElement("span");
+        let fiveDayForecastspanEl2 = document.createElement("span");
+        let fiveDayForecastspanEl3 = document.createElement("span");
+        let fiveDayForecastspanEl4 = document.createElement("span");
+        let fiveDayForecastIconEl = document.createElement("img");
         // give attribute to container
         fiveDayForecastListEl.classList.add("five-day-forecast-listcontainer")
         // set attribute to the span
-        fiveDayForecastspanEl.textContent = "Date: " + USstandardDate +"."
-            + "\nMax temperture: " + maxFahrenheit + " °F. "
-            + "\nWind speed: " + windSpeed
-            + "\nHumidity: " + humiDity +".";
-        fiveDayForecastspanEl.classList.add("five-day-forecast-span");
+        fiveDayForecastspanEl1.textContent = 'Date:' + USstandardDate + '.';
+        fiveDayForecastspanEl2.textContent = 'Max temperture:' + maxFahrenheit + '°F.';
+        fiveDayForecastspanEl3.textContent = 'Wind speed:' + windSpeed + 'MPH.'
+        fiveDayForecastspanEl4.textContent = 'Humidity: ' + humiDity + '%.';
+        fiveDayForecastspanEl1.classList.add("five-day-forecast-span");
+        fiveDayForecastspanEl2.classList.add("five-day-forecast-span");
+        fiveDayForecastspanEl3.classList.add("five-day-forecast-span");
+        fiveDayForecastspanEl4.classList.add("five-day-forecast-span");
         // set attribute to the icon
         fiveDayForecastIconEl.classList.add("five-day-forecast-icon");
         fiveDayForecastIconEl.setAttribute("src", iconurl);
         //append to the container
         getFiveDayforecastContentulElement.append(fiveDayForecastListEl);
-        fiveDayForecastListEl.append(fiveDayForecastspanEl);
+        fiveDayForecastListEl.append(fiveDayForecastspanEl1, fiveDayForecastspanEl2, fiveDayForecastspanEl3, fiveDayForecastspanEl4);
         fiveDayForecastListEl.append(fiveDayForecastIconEl);
     }
 }
@@ -297,5 +280,34 @@ var testlocation3 = "dallas"
 assembleApiRequsetURL(testlocation3)
 */
 
+// sample url = https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+// https://api.openweathermap.org/data/2.5/weather?q={city name},{country code}&appid={API key}
+// https://api.openweathermap.org/data/2.5/weather?q={city name},{state code},{country code}&appid={API key}
+// https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+
+//geocode convert api : http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+//var LosAngeles = "https://api.openweathermap.org/data/2.5/weather?q=los angeles&appid=" + APIkey;
+
+/* for reference
+ //var addEventListenertothelistEl = function(){}
+// declare this variable to get the element after the initial function is called and li element is appended to the parent element in HTML
+var SearchHistoryUL = document.getElementsByClassName("search-history-list-class")  //this is the ul element
+//console.log(SearchHistoryUL);
+//console.log(SearchHistoryUL[0]);
+// add function to li elements, when clicked, get the text content of the li element and call the function to assmble URL for api call
+Array.from(SearchHistoryUL).forEach((item) => {
+    item.addEventListener("click", function (event) {
+        event.preventDefault();
+        var liElement = event.target
+        var CityNamefromSearchHistory = liElement.textContent;
+        getTodaysWeatherUlelement.innerHTML = "";
+        getFiveDayforecastContentulElement.innerHTML = "";
+        if ((getTodaysWeatherContainer.children[2] === undefined) === false) {
+            getTodaysWeatherContainer.removeChild(getTodaysWeatherContainer.children[2])
+        }
+        assembleApiRequsetURL(CityNamefromSearchHistory);
+    })
+})
+*/
 
 //Todo make every var to be <li> elements, so they start in a new line.
