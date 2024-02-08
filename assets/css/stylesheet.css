@@ -149,6 +149,7 @@
     flex-direction: row;
     height: 65vh;
     padding: 1%;
+    overflow-y:scroll;
 }
 
 .five-day-forecast-container .five-day-forecast-title {
